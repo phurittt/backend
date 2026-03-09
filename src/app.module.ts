@@ -3,6 +3,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
+import { CourseTypesModule } from './course-types/course-types.module';
+import { CoursesModule } from './courses/courses.module';
+import { ProjectTypesModule } from './project-types/project-types.module';
 
 @Module({
   imports: [
@@ -18,6 +21,9 @@ import { UsersModule } from './users/users.module';
       autoLoadEntities: true,
     }),
     UsersModule,
+    CourseTypesModule,
+    CoursesModule,
+    ProjectTypesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
