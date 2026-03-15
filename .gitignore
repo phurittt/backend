@@ -1,21 +1,62 @@
+# IDEs and Editors
 .vscode/
+.idea/
+*.swp
+*.swo
+
+# Dependencies
+node_modules/
+
+# Build Output
+dist/
+build/
+
+# Environment variables
+.env
+.env*
+!.env.example
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# TypeScript
+tsconfig.tsbuildinfo
+
+# Testing
+coverage/
+
+# Database
 *.db
-*.bat
-*.exp
-*.pdb
-*.dll
-*.a
-*.so
+*.sqlite
 *.db-shm
 *.db-wal
-package-lock.json
-*.sqlite
-node_modules/
-build/
-# C benchmark binary
-bench/bench
+
+# Runtime
+tmp/
+temp/
+.cache/
+
+# Binaries / Compiled Files
+*.bat
+*.dll
+*.exe
+*.so
+*.pdb
+*.exp
+*.a
+
+# Lock files (if not used)
 deno.lock
 bun.lockb
-.DS_Store
-/dist
-/dist/
+
+# Private keys and Certificates
+*.pem
+*.crt
+*.key
