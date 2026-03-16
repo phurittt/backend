@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString, IsNumber, IsOptional, IsInt, IsIn } from 'class-validator';
+import { IsNotEmpty, IsString, IsOptional, IsInt, IsIn } from 'class-validator';
 
 export class CreateCourseDto {
   @IsNotEmpty({ message: 'กรุณาระบุประเภทหลักสูตร' })
@@ -30,4 +30,3 @@ export class CreateCourseDto {
   @IsIn([0, 1], { message: 'สถานะการแสดงผลต้องเป็น 0 หรือ 1 เท่านั้น' })
   is_visible?: number;
 }
-

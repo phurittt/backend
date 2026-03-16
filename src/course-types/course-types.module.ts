@@ -8,6 +8,6 @@ import { CourseType } from './entities/course-type.entity'; // <--- เช็ค
   imports: [TypeOrmModule.forFeature([CourseType])], // <--- ต้องมี CourseType ในนี้
   controllers: [CourseTypesController],
   providers: [CourseTypesService],
-  exports: [TypeOrmModule] // เพิ่มบรรทัดนี้เผื่อไว้ให้ Module อื่นดึงไปใช้ได้
+  exports: [TypeOrmModule], // เพิ่มบรรทัดนี้เผื่อไว้ให้ Module อื่นดึงไปใช้ได้
 })
 export class CourseTypesModule {}

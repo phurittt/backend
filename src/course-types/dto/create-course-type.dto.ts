@@ -11,4 +11,3 @@ export class CreateCourseTypeDto {
   @MaxLength(50)
   code?: string; // รหัสย่อ เช่น IT, MGMT, SOFT
 }
-

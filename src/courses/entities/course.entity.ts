@@ -1,4 +1,11 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
 import { CourseType } from '../../course-types/entities/course-type.entity';
 
 @Entity('courses')
@@ -34,4 +41,3 @@ export class Course {
   @JoinColumn({ name: 'course_type_id' }) // เชื่อมกับ Column ที่เราทำ Index ไว้
   courseType: CourseType;
 }
-

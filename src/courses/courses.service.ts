@@ -7,7 +7,8 @@ import { UpdateCourseDto } from './dto/update-course.dto';
 
 @Injectable()
 export class CoursesService {
-  constructor( // เป็น constructor ของ class สำหรับรับ dependency 
+  constructor(
+    // เป็น constructor ของ class สำหรับรับ dependency
     @InjectRepository(Course) //inject repository ของ entity ซึ่งก็คือ Course
     private readonly courseRepository: Repository<Course>, //private readonly คือ ใช้ได้แค่เฉพาะ class นี้ และห้ามเปลี่ยนค่า
     // courseRepository คือตัวแปรที่ใช้เก็บ repository ของ entity Course
@@ -51,16 +52,12 @@ export class CoursesService {
     await this.courseRepository.remove(course);
     return { message: `ลบหลักสูตร ID: ${id} เรียบร้อยแล้ว` };
   }
-
-
-
 }
 //Logic การทำงาน: ส่วนที่ไปคุยกับ Database จริงๆ เพื่อดึงข้อมูลหรือบันทึกข้อมูล
 
 // import { Injectable } from '@nestjs/common';
 // import { CreateCourseDto } from './dto/create-course.dto';
 // import { UpdateCourseDto } from './dto/update-course.dto';
-
 
 // @Injectable()
 // export class CoursesService {
