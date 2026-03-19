@@ -1,52 +1,67 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { CourseType } from './entities/course-type.entity';
 import { CreateCourseTypeDto } from './dto/create-course-type.dto';
 import { UpdateCourseTypeDto } from './dto/update-course-type.dto';
-import { CourseType } from './entities/course-type.entity';
 
 @Injectable()
 export class CourseTypesService {
   constructor(
     @InjectRepository(CourseType)
-    private readonly courseTypeRepository: Repository<CourseType>,
+    private readonly repository: Repository<CourseType>,
   ) {}
 
-  // 1. สร้างประเภทหลักสูตรใหม่
-  async create(createCourseTypeDto: CreateCourseTypeDto) {
-    const newCourseType = this.courseTypeRepository.create(createCourseTypeDto);
-    return await this.courseTypeRepository.save(newCourseType);
-  }
-
-  // 2. ดึงประเภทหลักสูตรทั้งหมด
   async findAll() {
-    return await this.courseTypeRepository.find({
-      order: { id: 'ASC' },
+    const types = await this.repository.find({
+      relations: ['courses'],
+      order: { id: 'DESC' },
     });
+    return types.map((t) => ({
+      ...t,
+      courseCount: t.courses?.length || 0,
+    }));
   }
 
-  // 3. ดึงข้อมูลตาม ID
+  //add this function
   async findOne(id: number) {
-    const courseType = await this.courseTypeRepository.findOne({
+    const type = await this.repository.findOne({
       where: { id },
+      relations: ['courses'],
     });
-    if (!courseType) {
-      throw new NotFoundException(`ไม่พบประเภทหลักสูตร ID: ${id}`);
+    if (!type) throw new NotFoundException(`ไม่พบประเภทหลักสูตร ID: ${id}`);
+    return {
+      ...type,
+      courseCount: type.courses?.length || 0,
+    };
+  }
+
+  async create(dto: CreateCourseTypeDto) {
+    const newType = this.repository.create(dto);
+    return await this.repository.save(newType);
+  }
+
+  // async update(id: number, dto: CreateCourseTypeDto) {
+  //   const type = await this.repository.preload({ id, ...dto });
+  //   if (!type) throw new NotFoundException(`ไม่พบประเภทหลักสูตร ID: ${id}`);
+  //   return await this.repository.save(type);
+  // }
+  async update(id: number, dto: UpdateCourseTypeDto) {
+    const type = await this.repository.preload({
+      id: id,
+      ...dto,
+    });
+    if (!type) {
+      throw new NotFoundException(
+        `ไม่พบประเภทหลักสูตร ID: ${id} เพื่อทำการอัปเดต`,
+      );
     }
-    return courseType;
+    return await this.repository.save(type);
   }
 
-  // 4. แก้ไขข้อมูล
-  async update(id: number, updateCourseTypeDto: UpdateCourseTypeDto) {
-    const courseType = await this.findOne(id);
-    const updated = Object.assign(courseType, updateCourseTypeDto);
-    return await this.courseTypeRepository.save(updated);
-  }
-
-  // 5. ลบข้อมูล
   async remove(id: number) {
-    const courseType = await this.findOne(id);
-    await this.courseTypeRepository.remove(courseType);
-    return { message: `ลบประเภทหลักสูตร ID: ${id} เรียบร้อยแล้ว` };
+    const type = await this.repository.findOneBy({ id });
+    if (!type) throw new NotFoundException(`ไม่พบข้อมูลที่ต้องการลบ`);
+    return await this.repository.remove(type);
   }
 }

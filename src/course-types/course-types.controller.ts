@@ -13,33 +13,31 @@ import { UpdateCourseTypeDto } from './dto/update-course-type.dto';
 
 @Controller('course-types')
 export class CourseTypesController {
-  constructor(private readonly courseTypesService: CourseTypesService) {}
-
-  @Post()
-  create(@Body() createCourseTypeDto: CreateCourseTypeDto) {
-    return this.courseTypesService.create(createCourseTypeDto);
-  }
+  constructor(private readonly service: CourseTypesService) {}
 
   @Get()
   findAll() {
-    return this.courseTypesService.findAll();
+    return this.service.findAll();
   }
 
+  // เพิ่ม findOne เข้ามาเพื่อให้โครงสร้าง REST ครบถ้วน
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.courseTypesService.findOne(+id);
+    return this.service.findOne(+id);
+  }
+
+  @Post()
+  create(@Body() dto: CreateCourseTypeDto) {
+    return this.service.create(dto);
   }
 
   @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateCourseTypeDto: UpdateCourseTypeDto,
-  ) {
-    return this.courseTypesService.update(+id, updateCourseTypeDto);
+  update(@Param('id') id: string, @Body() dto: UpdateCourseTypeDto) {
+    return this.service.update(+id, dto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.courseTypesService.remove(+id);
+    return this.service.remove(+id);
   }
 }
