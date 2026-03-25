@@ -1,25 +1,29 @@
 import { v2 as cloudinary } from 'cloudinary';
-
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
-
-export { cloudinary };
+import { unlink } from 'fs/promises';
+import { join } from 'path';
 
 /**
- * Delete a file from Cloudinary by its URL.
- * Silently ignores errors (file may have already been removed).
+ * Delete an uploaded file from wherever it was stored.
+ * - Cloudinary URLs  → deleted via Cloudinary API
+ * - Local /uploads   → deleted from disk
+ * Safe to call with null/undefined; errors are silently ignored.
  */
-export async function deleteCloudinaryFile(url: string | null | undefined): Promise<void> {
-  if (!url || !url.includes('cloudinary.com')) return;
+export async function deleteUploadedFile(url: string | null | undefined): Promise<void> {
+  if (!url) return;
+
   try {
-    // Extract public_id from URL (everything after /upload/(v\d+/)? without extension)
-    const match = url.match(/\/upload\/(?:v\d+\/)?(.+?)\.[^.]+$/);
-    if (!match) return;
-    await cloudinary.uploader.destroy(match[1]!);
+    if (url.includes('cloudinary.com')) {
+      // Extract public_id from Cloudinary URL (e.g. "tmis/filename" without extension)
+      const match = url.match(/\/upload\/(?:v\d+\/)?(.+?)\.[^.]+$/);
+      if (!match) return;
+      await cloudinary.uploader.destroy(match[1]!);
+    } else {
+      // Local disk
+      const match = url.match(/\/uploads\/(.+)$/);
+      if (!match) return;
+      await unlink(join(process.cwd(), 'uploads', match[1]!));
+    }
   } catch {
-    // ignore
+    // File may not exist — ignore
   }
 }

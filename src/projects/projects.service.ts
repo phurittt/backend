@@ -5,7 +5,7 @@ import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { Project } from './entities/project.entity';
 import { Lecturer } from '../lecturers/entities/lecturer.entity';
-import { deleteCloudinaryFile } from '../shared/cloudinary';
+import { deleteUploadedFile } from '../shared/cloudinary';
 
 @Injectable()
 export class ProjectsService {
@@ -64,7 +64,7 @@ export class ProjectsService {
 
     // ลบไฟล์รูปเดิมเมื่อมีการอัปโหลดรูปใหม่
     if (projectData.coverImage && project.coverImage && projectData.coverImage !== project.coverImage) {
-      await deleteCloudinaryFile(project.coverImage);
+      await deleteUploadedFile(project.coverImage);
     }
 
     // ลบความสัมพันธ์เดิมหากมีการส่ง ID ใหม่มา เพื่อให้ TypeORM ใช้ ID ในการอัปเดตแทน
@@ -78,7 +78,7 @@ export class ProjectsService {
 
   async remove(id: number) {
     const project = await this.findOne(id);
-    await deleteCloudinaryFile(project.coverImage);
+    await deleteUploadedFile(project.coverImage);
     await this.projectRepository.remove(project);
     return { message: `ลบโครงการ ID: ${id} เรียบร้อยแล้ว` };
   }

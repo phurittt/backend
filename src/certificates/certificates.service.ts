@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { deleteCloudinaryFile } from '../shared/cloudinary';
+import { deleteUploadedFile } from '../shared/cloudinary';
 import { CreateCertificateDto } from './dto/create-certificate.dto';
 import { UpdateCertificateDto } from './dto/update-certificate.dto';
 import { SaveProjectIssuanceDto } from './dto/save-project-issuance.dto';
@@ -243,7 +243,7 @@ export class CertificatesService {
     if (dto.templateImage !== undefined) {
       // ลบไฟล์เดิมถ้ามีการเปลี่ยนรูปใหม่
       if (dto.templateImage && template.templateImage && dto.templateImage !== template.templateImage) {
-        await deleteCloudinaryFile(template.templateImage);
+        await deleteUploadedFile(template.templateImage);
       }
       template.templateImage = dto.templateImage;
     }
