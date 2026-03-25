@@ -6,25 +6,16 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
-import { extname, join } from 'path';
-import { existsSync, mkdirSync } from 'fs';
-
-const uploadsDir = join(process.cwd(), 'uploads');
-if (!existsSync(uploadsDir)) mkdirSync(uploadsDir, { recursive: true });
+import { memoryStorage } from 'multer';
+import { cloudinary } from '../shared/cloudinary';
+import type { UploadApiResponse } from 'cloudinary';
 
 @Controller('upload')
 export class UploadController {
   @Post()
   @UseInterceptors(
     FileInterceptor('file', {
-      storage: diskStorage({
-        destination: uploadsDir,
-        filename: (_req, file, cb) => {
-          const unique = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
-          cb(null, `${unique}${extname(file.originalname)}`);
-        },
-      }),
+      storage: memoryStorage(), // keep file in memory, upload to Cloudinary
       fileFilter: (_req, file, cb) => {
         if (!file.mimetype.match(/^image\/(jpeg|jpg|png|gif|webp)$/)) {
           return cb(new BadRequestException('Only image files are allowed'), false);
@@ -34,8 +25,20 @@ export class UploadController {
       limits: { fileSize: 10 * 1024 * 1024 }, // 10 MB
     }),
   )
-  uploadFile(@UploadedFile() file: Express.Multer.File) {
+  async uploadFile(@UploadedFile() file: Express.Multer.File) {
     if (!file) throw new BadRequestException('No file provided');
-    return { url: `http://localhost:3000/uploads/${file.filename}` };
+
+    const result = await new Promise<UploadApiResponse>((resolve, reject) => {
+      const stream = cloudinary.uploader.upload_stream(
+        { folder: 'tmis' },
+        (error, res) => {
+          if (error || !res) reject(error ?? new Error('Cloudinary upload failed'));
+          else resolve(res);
+        },
+      );
+      stream.end(file.buffer);
+    });
+
+    return { url: result.secure_url };
   }
 }

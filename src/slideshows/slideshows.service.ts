@@ -4,19 +4,7 @@ import { Repository } from 'typeorm';
 import { CreateSlideshowDto } from './dto/create-slideshow.dto';
 import { UpdateSlideshowDto } from './dto/update-slideshow.dto';
 import { Slideshow } from './entities/slideshow.entity';
-import { unlink } from 'fs/promises';
-import { join } from 'path';
-
-async function deleteUploadedFile(url: string | null | undefined): Promise<void> {
-  if (!url) return;
-  const match = url.match(/\/uploads\/(.+)$/);
-  if (!match) return;
-  try {
-    await unlink(join(process.cwd(), 'uploads', match[1]!));
-  } catch {
-    // File may not exist — ignore
-  }
-}
+import { deleteCloudinaryFile } from '../shared/cloudinary';
 
 @Injectable()
 export class SlideshowsService {
@@ -64,7 +52,7 @@ export class SlideshowsService {
       slideshow.imageUrl &&
       updateSlideshowDto.imageUrl !== slideshow.imageUrl
     ) {
-      await deleteUploadedFile(slideshow.imageUrl);
+      await deleteCloudinaryFile(slideshow.imageUrl);
     }
     const updatedSlideshow = Object.assign(slideshow, updateSlideshowDto);
     return await this.slideshowRepository.save(updatedSlideshow);
@@ -72,7 +60,7 @@ export class SlideshowsService {
 
   async remove(id: number) {
     const slideshow = await this.findOne(id);
-    await deleteUploadedFile(slideshow.imageUrl);
+    await deleteCloudinaryFile(slideshow.imageUrl);
     await this.slideshowRepository.remove(slideshow);
     return { message: `ลบสไลด์โชว์ ID: ${id} เรียบร้อยแล้ว` };
   }

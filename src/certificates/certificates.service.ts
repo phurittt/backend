@@ -1,19 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { unlink } from 'fs/promises';
-import { join } from 'path';
-
-async function deleteUploadedFile(url: string | null | undefined): Promise<void> {
-  if (!url) return;
-  const match = url.match(/\/uploads\/(.+)$/);
-  if (!match) return;
-  try {
-    await unlink(join(process.cwd(), 'uploads', match[1]!));
-  } catch {
-    // File may not exist — ignore
-  }
-}
+import { deleteCloudinaryFile } from '../shared/cloudinary';
 import { CreateCertificateDto } from './dto/create-certificate.dto';
 import { UpdateCertificateDto } from './dto/update-certificate.dto';
 import { SaveProjectIssuanceDto } from './dto/save-project-issuance.dto';
@@ -255,7 +243,7 @@ export class CertificatesService {
     if (dto.templateImage !== undefined) {
       // ลบไฟล์เดิมถ้ามีการเปลี่ยนรูปใหม่
       if (dto.templateImage && template.templateImage && dto.templateImage !== template.templateImage) {
-        await deleteUploadedFile(template.templateImage);
+        await deleteCloudinaryFile(template.templateImage);
       }
       template.templateImage = dto.templateImage;
     }
