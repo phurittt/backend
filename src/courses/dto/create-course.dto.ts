@@ -15,7 +15,7 @@ export class CreateCourseDto {
 
   @IsOptional()
   @IsInt()
-  hours?: number;
+  duration_hours?: number;
 
   @IsOptional()
   @IsString()
@@ -24,6 +24,10 @@ export class CreateCourseDto {
   @IsOptional()
   @IsString()
   required_knowledge?: string;
+
+  @IsOptional()
+  @IsString()
+  coverImage?: string;
 
   @IsOptional()
   @IsInt()

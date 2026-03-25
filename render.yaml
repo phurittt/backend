@@ -1,0 +1,38 @@
+services:
+  - type: web
+    name: tmis-backend
+    runtime: node
+    plan: free
+    buildCommand: npm install && npm run build
+    startCommand: npm run start:prod
+    envVars:
+      - key: NODE_ENV
+        value: production
+      # ── Database (MySQL) ──────────────────────────────────────────
+      # Fill these in from your cloud MySQL provider (e.g. Railway, Aiven)
+      - key: DB_HOST
+        sync: false
+      - key: DB_PORT
+        value: "3306"
+      - key: DB_USER
+        sync: false
+      - key: DB_PASS
+        sync: false
+      - key: DB_NAME
+        sync: false
+      # ── Mail (optional) ──────────────────────────────────────────
+      - key: MAIL_HOST
+        value: smtp.gmail.com
+      - key: MAIL_PORT
+        value: "587"
+      - key: MAIL_USER
+        sync: false
+      - key: MAIL_PASS
+        sync: false
+      - key: MAIL_FROM
+        value: '"TMIS - BUCC" <noreply@bucc.buu.ac.th>'
+      # ── URLs ──────────────────────────────────────────────────────
+      - key: BACKEND_URL
+        sync: false   # set to your Render backend URL e.g. https://tmis-backend.onrender.com
+      - key: FRONTEND_URL
+        sync: false   # set to your Render frontend URL e.g. https://tmis-frontend.onrender.com

@@ -4,6 +4,7 @@ import { Repository } from 'typeorm'; // ต้อง import เพิ่ม
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity'; // import Entity ที่เราสร้างไว้
+import { Registration } from '../registrations/entities/registration.entity';
 
 @Injectable()
 export class UsersService {
@@ -11,7 +12,9 @@ export class UsersService {
   constructor(
     @InjectRepository(User)
     private usersRepository: Repository<User>,
-  ) {}
+    @InjectRepository(Registration) // ✅ เพิ่มอันนี้
+    private registrationRepository: Repository<Registration>,
+  ) { }
 
   // สร้าง User ใหม่
   create(createUserDto: CreateUserDto) {
@@ -27,6 +30,19 @@ export class UsersService {
   // ดึงข้อมูลตาม ID
   findOne(id: number) {
     return this.usersRepository.findOneBy({ id });
+  }
+
+  // ดึงข้อมูลตาม username
+  findByUsername(username: string) {
+    return this.usersRepository.findOneBy({ username });
+  }
+
+  // ดึงข้อมูลการลงทะเบียนตาม ID
+  async getUserRegistrations(userId: number) {
+    return this.registrationRepository.find({
+      where: { userId },
+      relations: ['project'], // 🔥 ดึง project มาด้วย
+    });
   }
 
   // แก้ไขข้อมูล

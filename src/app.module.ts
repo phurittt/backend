@@ -6,24 +6,40 @@ import { UsersModule } from './users/users.module';
 import { CourseTypesModule } from './course-types/course-types.module';
 import { CoursesModule } from './courses/courses.module';
 import { ProjectTypesModule } from './project-types/project-types.module';
+import { LecturersModule } from './lecturers/lecturers.module';
+import { ProjectsModule } from './projects/projects.module';
+import { RegistrationsModule } from './registrations/registrations.module';
+import { CertificatesModule } from './certificates/certificates.module';
+import { FinancesModule } from './finances/finances.module';
+import { SlideshowsModule } from './slideshows/slideshows.module';
+import { AuthModule } from './auth/auth.module';
+import { UploadModule } from './upload/upload.module';
 
 @Module({
   imports: [
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: 'localhost',
-      port: 3306,
-      username: 'root', // ปกติของ XAMPP คือ root
-      password: '', // ปกติของ XAMPP คือว่างไว้
-      database: 'my_app_db', // ชื่อ DB ที่สร้างใน Phase 1
+      host: process.env.DB_HOST || 'localhost',
+      port: Number(process.env.DB_PORT) || 3306,
+      username: process.env.DB_USER || 'root',
+      password: process.env.DB_PASS || '',
+      database: process.env.DB_NAME || 'my_app_db',
       entities: [],
-      synchronize: true, // Auto create tables (ใช้เฉพาะ Dev เท่านั้น)
+      synchronize: true,
       autoLoadEntities: true,
     }),
     UsersModule,
     CourseTypesModule,
     CoursesModule,
     ProjectTypesModule,
+    LecturersModule,
+    ProjectsModule,
+    RegistrationsModule,
+    CertificatesModule,
+    FinancesModule,
+    SlideshowsModule,
+    AuthModule,
+    UploadModule,
   ],
   controllers: [AppController],
   providers: [AppService],

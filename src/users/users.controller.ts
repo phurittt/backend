@@ -25,6 +25,12 @@ export class UsersController {
     return this.usersService.findAll();
   }
 
+  // ดึงข้อมูลการลงทะเบียนตาม ID
+  @Get(':id/registrations')
+  getUserRegistrations(@Param('id') id: number) {
+    return this.usersService.getUserRegistrations(id);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.usersService.findOne(+id);
